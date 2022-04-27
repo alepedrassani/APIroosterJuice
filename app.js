@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = requere('cors');
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedidos  = require('./routes/pedidos')
 const rotaUsuarios = require('./routes/usuarios')
 
+app.use(cors())
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false })); //apenas dados simples
 app.use(bodyParser.json()); //json de entrada no body
