@@ -49,4 +49,15 @@ router.patch('/',upload.single('produto_imagem'), login.obrigatorio,  ProdutosCo
 //exlcui um produto
 router.delete('/', login.obrigatorio, ProdutosController.DeletaUmPrduto)
 
+router.post(
+    '/:id_produto/imagens',
+    login.obrigatorio,
+    upload.single('produto_imagem'),
+    ProdutosController.postImagem
+    );
+
+router.get(
+    '/:id_produto/imagens',
+    ProdutosController.getImagens
+)
 module.exports = router;

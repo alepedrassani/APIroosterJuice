@@ -1,1 +1,1 @@
-select * from Produtos
+SELECT * from imagens_produtos

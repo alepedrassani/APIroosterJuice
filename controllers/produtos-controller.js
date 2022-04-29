@@ -189,3 +189,72 @@ exports.DeletaUmPrduto = (req, res, next) => {
         )
     })
 }
+
+
+
+exports.postImagem = (req, res, next) => {
+    console.log(req.file);
+
+    mysql.getConnection((error, conn) => {
+        if(error){return res.status(500).send({ error: error })}
+        conn.query(
+            'INSERT INTO imagens_produtos(id_produto, caminho) VALUES(?,?)',
+            [
+                req.params.id_produto, 
+                req.file.path
+            ],
+            (error, result, field) => {
+                conn.release();
+                if(error){return res.status(500).send({ error: error }) }
+
+                const response = {
+                    mensagem: 'Imagem inserida com sucesso',
+                    imagemCriada: {
+                        id_produto : req.params.id_produto,
+                        id_imagem  : result.id_imagem,
+                        imagem     : req.file.path,
+                        request: {
+                            tipo: 'GET',
+                            descricao: 'Retorna todos as imagens',
+                            url:'http://localhost:3000/produtos/' + req.params.id_produto + '/imagens'
+
+                        }
+                    }
+                }
+
+                return res.status(201).send(response);
+            }
+        )
+    });
+}
+
+
+exports.getImagens = (req, res, next) => {
+    mysql.getConnection((error, conn) =>{
+        if(error){return res.status(500).send({ error: error })}
+        conn.query(
+            'select * from imagens_produtos where id_produto  = ?',
+            [req.params.id_produto], 
+            (error, result, fields) =>{
+                conn.release();
+                if(error){return res.status(500).send({ error: error })}
+                
+               
+                const response = {
+                    quantidade: result.length,
+                    imagens: result.map(img => {
+                        return{
+                        id_produto: parseInt(req.params.id_produto),
+                        id_imagem: img.id_imagem,
+                        caminho: 'http://localhost:3000/' + img.caminho
+                    }
+
+                    })
+                }
+
+                return res.status(200).send(response);
+            }
+        )
+    })
+
+}
